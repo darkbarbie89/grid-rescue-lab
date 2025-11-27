@@ -2,20 +2,39 @@
 
 import React, { useState } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
+import { BLOG_POSTS } from './lib/blog-data'; // Import your blog data
 
-// --- DATA: PUMP SPECS ---
+// --- EXPANDED DATA: PUMP SPECS ---
 const PUMPS = {
   "0.33": { name: "1/3 HP Pump", running: 800, surge: 2150 },
   "0.50": { name: "1/2 HP Pump", running: 1050, surge: 3200 },
   "0.75": { name: "3/4 HP Pump", running: 1500, surge: 4100 }
 };
 
-// --- DATA: BATTERY SPECS ---
+// --- EXPANDED DATA: BATTERY SPECS ---
 const BATTERIES = {
+  // JACKERY
   "jackery240": { name: "Jackery Explorer 240", continuous: 200, surge: 400, link: "#" },
+  "jackery300plus": { name: "Jackery Explorer 300 Plus", continuous: 300, surge: 600, link: "#" },
+  "jackery500": { name: "Jackery Explorer 500", continuous: 500, surge: 1000, link: "#" },
+  "jackery1000": { name: "Jackery Explorer 1000 v2", continuous: 1500, surge: 3000, link: "#" },
+  
+  // ECOFLOW
+  "river2": { name: "EcoFlow River 2", continuous: 300, surge: 600, link: "#" },
+  "river2pro": { name: "EcoFlow River 2 Pro", continuous: 800, surge: 1600, link: "#" },
   "delta2": { name: "EcoFlow Delta 2", continuous: 1800, surge: 2700, link: "#" },
   "delta2max": { name: "EcoFlow Delta 2 Max", continuous: 2400, surge: 4800, link: "#" },
-  "ac200max": { name: "Bluetti AC200MAX", continuous: 2200, surge: 4800, link: "#" }
+  "deltapro": { name: "EcoFlow Delta Pro", continuous: 3600, surge: 7200, link: "#" },
+
+  // BLUETTI
+  "eb3a": { name: "Bluetti EB3A", continuous: 600, surge: 1200, link: "#" },
+  "ac180": { name: "Bluetti AC180", continuous: 1800, surge: 2700, link: "#" },
+  "ac200max": { name: "Bluetti AC200MAX", continuous: 2200, surge: 4800, link: "#" },
+
+  // ANKER
+  "anker521": { name: "Anker Solix 521", continuous: 300, surge: 600, link: "#" },
+  "ankerf1200": { name: "Anker Solix F1200", continuous: 1800, surge: 2400, link: "#" },
 };
 
 export default function Home() {
@@ -38,7 +57,7 @@ export default function Home() {
       passed = false;
       msg = `CRITICAL FAIL: Your ${p.name} needs ~${p.surge}W to start. The ${b.name} only hits ${b.surge}W. It will trip immediately.`;
       btnText = "View The Safe Upgrade";
-      link = "#"; // Put your affiliate link for the "Safe" unit here
+      link = "#"; // Recommendation Link
     } else if (b.continuous < p.running) {
       passed = false;
       msg = `FAIL: The battery cannot handle the continuous running watts (${p.running}W).`;
@@ -52,7 +71,6 @@ export default function Home() {
     <div className="min-h-screen bg-neutral-950 text-neutral-200 font-sans selection:bg-orange-500 selection:text-white">
       <Head>
         <title>Sump Pump Surge Auditor | Grid Rescue Lab</title>
-        <meta name="description" content="Calculate if your battery backup will fail during a storm." />
       </Head>
 
       {/* --- HERO SECTION --- */}
@@ -61,7 +79,10 @@ export default function Home() {
           <div className="font-bold text-xl tracking-tighter text-white">
             <span className="text-orange-500">GRID</span>RESCUE<span className="text-neutral-600">LAB</span>
           </div>
-          <a href="#calculator" className="text-sm font-medium hover:text-orange-500 transition">Run Audit</a>
+          <div className="flex space-x-6">
+            <Link href="/blog" className="text-sm font-medium hover:text-white transition">Field Reports</Link>
+            <a href="#calculator" className="text-sm font-bold text-orange-500 hover:text-orange-400 transition">Run Audit</a>
+          </div>
         </div>
       </header>
 
@@ -85,7 +106,7 @@ export default function Home() {
           <div className="bg-neutral-900 border border-neutral-800 p-8 rounded-2xl shadow-2xl shadow-black/50 ring-1 ring-white/10">
             <div className="flex items-center space-x-2 mb-6 border-b border-neutral-800 pb-4">
               <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-              <h2 className="font-mono text-sm text-neutral-400 uppercase tracking-widest">Surge Auditor v1.0</h2>
+              <h2 className="font-mono text-sm text-neutral-400 uppercase tracking-widest">Surge Auditor v2.1</h2>
             </div>
 
             <div className="space-y-6">
@@ -146,34 +167,29 @@ export default function Home() {
           </div>
         </section>
 
-        {/* --- TRUST / AFFILIATE SECTION --- */}
+        {/* --- BLOG SECTION (SEO) --- */}
         <section className="py-20 border-t border-neutral-900 bg-neutral-900/30">
-          <div className="max-w-4xl mx-auto px-6 text-center">
-            <h3 className="text-2xl font-bold text-white mb-8">Why "Running Watts" Kill Basements</h3>
-            <div className="grid md:grid-cols-3 gap-8 text-left">
-              <div className="p-6 bg-neutral-900 rounded-xl border border-neutral-800">
-                <div className="text-orange-500 text-xl mb-4">⚡</div>
-                <h4 className="font-bold text-white mb-2">The Surge Gap</h4>
-                <p className="text-sm text-neutral-400">Pumps require 3x their rated power to start. A 800W pump needs 2400W for 1 second.</p>
-              </div>
-              <div className="p-6 bg-neutral-900 rounded-xl border border-neutral-800">
-                <div className="text-orange-500 text-xl mb-4">🔋</div>
-                <h4 className="font-bold text-white mb-2">Inverter Limits</h4>
-                <p className="text-sm text-neutral-400">Cheap batteries trip their safety fuse instantly when they detect this spike.</p>
-              </div>
-              <div className="p-6 bg-neutral-900 rounded-xl border border-neutral-800">
-                <div className="text-orange-500 text-xl mb-4">🛡️</div>
-                <h4 className="font-bold text-white mb-2">The Solution</h4>
-                <p className="text-sm text-neutral-400">We only recommend units with "X-Boost" or high surge inverters like the Delta 2 Max.</p>
-              </div>
+          <div className="max-w-5xl mx-auto px-6">
+            <div className="flex items-center justify-between mb-10">
+              <h3 className="text-2xl font-bold text-white">Latest Lab Data</h3>
+              <Link href="/blog" className="text-sm text-orange-500 hover:text-orange-400">View All Tests &rarr;</Link>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-8">
+              {BLOG_POSTS.slice(0, 2).map((post) => (
+                <Link key={post.slug} href={`/blog/${post.slug}`} className="block p-6 bg-neutral-900 border border-neutral-800 rounded-xl hover:border-orange-500/50 transition">
+                  <h4 className="font-bold text-xl text-white mb-2">{post.title}</h4>
+                  <p className="text-sm text-neutral-400">{post.excerpt}</p>
+                </Link>
+              ))}
             </div>
           </div>
         </section>
+
       </main>
 
       <footer className="py-8 text-center text-neutral-600 text-xs border-t border-neutral-900">
         <p>© 2025 Grid Rescue Lab. Independent Engineering Audits.</p>
-        <p className="mt-2">Disclaimer: As an Amazon Associate, we earn from qualifying purchases.</p>
       </footer>
     </div>
   );
